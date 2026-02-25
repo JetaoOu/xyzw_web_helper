@@ -6,6 +6,14 @@
  */
 export const downloadCanvasAsImage = (canvas, filename) => {
   try {
+      // 判断是否为PC浏览器（非移动设备）
+      const isPCBrowser = () => {
+          // 检测常用的移动端特征
+          const userAgent = navigator.userAgent.toLowerCase();
+          const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'ios', 'windows phone', 'blackberry', 'webos', 'symbian'];
+          // 如果userAgent中不包含任何移动端关键词，判定为PC端
+          return !mobileKeywords.some(keyword => userAgent.includes(keyword));
+      };
     // 优先尝试使用 toBlob，因为它处理大文件更有效率且不容易崩溃
     if (canvas.toBlob) {
       canvas.toBlob((blob) => {
@@ -18,7 +26,7 @@ export const downloadCanvasAsImage = (canvas, filename) => {
         // 尝试使用 navigator.share (主要针对移动端)
         // 注意：navigator.share 需要在 HTTPS 环境下，且必须由用户手势触发
         // 这里作为一种尝试，如果失败则回退到下载链接
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: blob.type })] })) {
+        if (!isPCBrowser() && navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: blob.type })] })) {
             const file = new File([blob], filename, { type: blob.type });
             navigator.share({
                 files: [file],
