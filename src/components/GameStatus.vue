@@ -874,19 +874,6 @@ onUnmounted(() => {
   }
 }
 
-/* 样式二（移植版）容器尺寸，不影响样式一 */
-.warrank-full-container.style2-container {
-  position: relative;
-  z-index: 1;
-  height: calc(100vh - 180px);
-  min-height: 700px;
-
-  @media (max-width: 768px) {
-    height: calc(100vh - 180px);
-    min-height: 500px;
-  }
-}
-
 .gold-fish-layout {
   align-items: stretch;
   display: flex;
