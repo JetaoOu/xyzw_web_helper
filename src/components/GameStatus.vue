@@ -33,6 +33,7 @@
       <n-tab-pane name="peachGroup" tab="蟠桃园" />
       <n-tab-pane name="rankGroup" tab="排行榜" />
       <n-tab-pane name="fightPvp" tab="切磋" />
+      <n-tab-pane name="goldFishCalc" tab="金鱼计算" />
     </n-tabs>
 
     <!-- 阵容（仅日常） -->
@@ -362,6 +363,10 @@
     </div>
     <!-- 切磋（提取组件） -->
     <FightPvp v-if="activeSection === 'fightPvp'" />
+    <div v-if="activeSection === 'goldFishCalc'" class="gold-fish-layout">
+      <BlackMarketPlannerCard />
+      <ResourceGrowthCalculatorCard />
+    </div>
   </div>
 </template>
 
@@ -384,6 +389,13 @@ import HeroUpgradeCard from "./cards/HeroUpgradeCard.vue";
 import MonthlyTasksCard from "./cards/MonthlyTasksCard.vue";
 import RecruitHelperCard from "./cards/RecruitHelperCard.vue";
 import RefineHelperCard from "./cards/RefineHelperCard.vue";
+import BlackMarketPlannerCard from "./cards/BlackMarketPlannerCard.vue";
+import ResourceGrowthCalculatorCard from "./cards/ResourceGrowthCalculatorCard.vue";
+import TowerStatus from "./Tower/TowerStatus.vue";
+import WeirdTowerStatus from "./Tower/WeirdTowerStatus.vue";
+import BossTower from "./Tower/BossTower.vue";
+import PeachInfo from "./Club/PeachInfo.vue";
+import PeachInfoV2 from "./Club/PeachInfoV2.vue";
 import ServerRankList from "./cards/ServerRankListPageCard.vue";
 import SkinChallengeCard from "./cards/SkinChallengeCard.vue";
 import StarUpgradeCard from "./cards/StarUpgradeCard.vue";
@@ -740,6 +752,32 @@ onUnmounted(() => {
   @media (max-width: 768px) {
     height: calc(100vh - 180px);
     min-height: 500px;
+  }
+}
+
+.gold-fish-layout {
+  align-items: stretch;
+  display: flex;
+  gap: 16px;
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.gold-fish-layout > * {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+}
+
+@media (max-width: 900px) {
+  .gold-fish-layout {
+    flex-direction: column;
+  }
+
+  .gold-fish-layout > * {
+    flex-basis: 100%;
+    max-width: 100%;
   }
 }
 
