@@ -1,0 +1,38 @@
+name: 自动 Rebase 分支到主分支最新
+
+on:
+  push:
+    branches:
+      - main  # 监听主分支更新（你也可以改成 master）
+
+jobs:
+  auto-rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 必须拉全部分支历史
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 配置 Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 自动 Rebase 目标分支
+        run: |
+          # 你要自动同步的分支（可写多个）
+          TARGET_BRANCHES=("xy") 
+          
+          for branch in "${TARGET_BRANCHES[@]}"; do
+            echo "====================================="
+            echo "正在 rebase: $branch → main"
+            echo "====================================="
+            
+            git checkout $branch
+            git rebase main
+            
+            # 推送到远程（强制安全推送）
+            git push --force-with-lease origin $branch
+          done
