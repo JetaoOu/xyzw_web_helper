@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main  # 监听主分支更新（你也可以改成 master）
+  workflow_dispatch:  # 👈 加上这一行，就能手动触发
 
 jobs:
   auto-rebase:
