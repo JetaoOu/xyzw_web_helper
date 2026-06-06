@@ -16,7 +16,7 @@ jobs:
       contents: write  # 必须给推送权限，否则会报错 403
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
