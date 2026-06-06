@@ -3,21 +3,22 @@ name: 自动 Rebase 分支到主分支最新
 on:
   push:
     branches:
-      - main  # 监听主分支更新（你也可以改成 master）
-  workflow_dispatch:  # 👈 加上这一行，就能手动触发
-  
+      - main  # 主分支更新时自动触发
+  workflow_dispatch:  # 手动触发
+
 env:
-  # 强制所有 JavaScript Action 使用 Node.js 24，消除警告
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # 消除 Node.js 20 弃用警告
+
 jobs:
   auto-rebase:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 必须给推送权限，否则会报错 403
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 必须拉全部分支历史
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 配置 Git
@@ -25,19 +26,30 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: 自动 Rebase 目标分支
+      - name: 自动 Rebase 到 main 最新
         run: |
-          # 你要自动同步的分支（可写多个）
-          TARGET_BRANCHES=("xy") 
-          
+          # 在这里填写需要自动同步的分支（可多个）
+          TARGET_BRANCHES=("xy")
+
           for branch in "${TARGET_BRANCHES[@]}"; do
+            echo -e "\n====================================="
+            echo "正在处理分支：$branch"
             echo "====================================="
-            echo "正在 rebase: $branch → main"
-            echo "====================================="
-            
-            git checkout $branch
-            git rebase main
-            
-            # 推送到远程（强制安全推送）
-            git push --force-with-lease origin $branch
+
+            # 切换并拉取最新
+            git checkout "$branch"
+            git pull origin "$branch" --no-rebase
+
+            # 执行 rebase
+            if git rebase main; then
+              echo "✅ Rebase 成功，正在推送..."
+              git push --force-with-lease origin "$branch"
+            else
+              echo "❌ 发生冲突，自动终止，需要手动解决"
+              git rebase --abort
+              exit 1
+            fi
           done
+
+      - name: 完成
+        run: echo "所有分支已同步完成 🚀"
