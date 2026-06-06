@@ -5,7 +5,11 @@ on:
     branches:
       - main  # 监听主分支更新（你也可以改成 master）
   workflow_dispatch:  # 👈 加上这一行，就能手动触发
-
+  
+env:
+  # 强制所有 JavaScript Action 使用 Node.js 24，消除警告
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  
 jobs:
   auto-rebase:
     runs-on: ubuntu-latest
