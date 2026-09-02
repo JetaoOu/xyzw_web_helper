@@ -41,7 +41,7 @@ jobs:
             git pull origin "$branch" --no-rebase
 
             # 执行 rebase
-            if git rebase main; then
+            if git rebase -Xtheirs main; then
               echo "✅ Rebase 成功，正在推送..."
               git push --force-with-lease origin "$branch"
             else
